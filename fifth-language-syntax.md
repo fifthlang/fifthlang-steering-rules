@@ -8,8 +8,8 @@ inclusion: manual
 
 ## Basic Syntax
 
-:::rule id="SYN-001" mandatory="false" category="syntax"
-Basic syntax looks like this:
+:::rule id="SYN-001" mandatory="true" category="syntax"
+Use canonical Fifth syntax in examples. To comply, use forms such as:
 
 ```fifth
 class Person {
@@ -17,15 +17,22 @@ class Person {
     Height: float;
 }
 
-main() => myprint(5 + 6);
-myprint(int x) => std.print(x);
+main(): int
+{
+  myprint(5 + 6);
+  return 0;  
+}
+myprint(int x): int
+{
+  std.print(x);
+}
 ```
 :::
 
 ## Variable Declarations
 
 :::rule id="SYN-002" category="syntax"
-Use `name: type = value` form. Never use `var name =` in C# or JavaScript style, and never use type-first forms such as `type name =`.
+Declare variables in `name: type = value` form. To comply, use declarations such as:
 
 ```fifth
 x: int = 42;
@@ -35,12 +42,10 @@ g: graph = KG.CreateGraph();
 
 ## Function Definitions
 
-:::rule id="SYN-003" mandatory="false" category="functions"
-Function definitions can use either expression bodies or block bodies:
+:::rule id="SYN-003" category="functions"
+Always define functions with block bodies. To comply, use forms such as:
 
 ```fifth
-add(int a, int b) => a + b;
-
 greet(string name) {
     std.print("Hello " + name);
 }
@@ -50,50 +55,32 @@ greet(string name) {
 ## Parameter Constraints (Guards)
 
 :::rule id="SYN-004" category="guards"
-Use the parameter constraint form with block bodies:
+Write guards as parameter constraints, not `when` clauses. To comply, write guards like:
 
 ```fifth
 myprint(int x | x == 0) { std.print(x); }
-```
-
-Do not use the legacy `when` shorthand.
-
-```fifth
-// INVALID
-// myprint(int x) when x == 0 => std.print(x);
 ```
 :::
 
 ## Knowledge Graph Constructs
 
-:::rule id="SYN-005" mandatory="false" category="knowledge-graph"
-Use the canonical knowledge-graph forms:
+:::rule id="SYN-005" category="knowledge-graph"
+Use canonical store and graph forms for knowledge-graph code. To comply, use forms such as:
 
 ```fifth
 myStore: store = sparql_store(<http://example.org/store>);
-store default = sparql_store(<http://example.org/default>);
-
 g: graph = KG.CreateGraph();
-// Add triples with += operator
 ```
 :::
 
 ## TriG and SPARQL Literals
 
-:::rule id="SYN-006" mandatory="false" category="knowledge-graph"
-Use these literal forms in syntax and examples:
-
-- TriG literals use `<{...}>`
-- SPARQL literals use `?<...>`
-- Object-position literal values may be strings, booleans, chars, signed integers, unsigned integers, `float`, `double`, or `decimal`
+:::rule id="SYN-006" category="knowledge-graph"
+Use canonical literal syntax for TriG and SPARQL values. To comply, use `<{...}>` for TriG, `?<...>` for SPARQL, and supported scalar types only for object literals.
 :::
 
 ## Sample Files
 
-:::rule id="SYN-007" mandatory="false" category="reference"
-Use these locations when looking for canonical syntax examples:
-
-- `test/ast-tests/CodeSamples/*.5th`
-- `src/parser/grammar/test_samples/*.5th`
-- `docs/Getting-Started/`
+:::rule id="SYN-007" category="reference"
+Use repository sample paths as canonical syntax references. To comply, prefer `test/ast-tests/CodeSamples/*.5th`, `src/parser/grammar/test_samples/*.5th`, and `docs/Getting-Started/`.
 :::

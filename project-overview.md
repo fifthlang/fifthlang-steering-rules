@@ -3,7 +3,6 @@ id: steering-project-overview
 title: Fifth Language Project Overview
 inclusion: auto
 ---
-
 # Fifth Language Project Overview
 
 :::rule id="OVR-001" mandatory="false" category="overview"

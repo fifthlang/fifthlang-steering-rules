@@ -9,53 +9,32 @@ fileMatchPattern: "src/parser/**,docs/**/*.5th,test/**/*.5th,src/parser/grammar/
 
 ## Split Grammar Architecture
 
-:::rule id="GRAM-001" category="architecture"
-The parser surface is divided across three primary assets:
-
-- `src/parser/grammar/FifthLexer.g4` for tokens, keywords, literals, and lexical structure
-- `src/parser/grammar/FifthParser.g4` for syntactic rules and grammar structure
-- `src/parser/AstBuilderVisitor.cs` for parse-tree to high-level AST transformation
+:::rule id="GRAM-001" category="architecture" mandatory="true"
+Keep syntax responsibilities split across lexer, parser, and AST builder. To comply, define tokens in `FifthLexer.g4`, syntax rules in `FifthParser.g4`, and parse-tree mapping in `AstBuilderVisitor.cs`.
 :::
 
 ## Grammar Change Workflow
 
-:::rule id="GRAM-002" category="workflow"
-When grammar behavior changes:
-
-1. Edit `FifthLexer.g4` for tokens and keywords and `FifthParser.g4` for syntax rules as needed
-2. Update `AstBuilderVisitor.cs` for the new syntax constructs
-3. Add test samples under `src/parser/grammar/test_samples/*.5th`
-4. Rely on the normal build to run ANTLR compilation automatically
-5. Run parser tests with `dotnet test test/syntax-parser-tests/ -v minimal`
-6. Run the full regression suite with `dotnet test fifthlang.sln`
+:::rule id="GRAM-002" category="workflow" mandatory="true"
+Any grammar change must follow the full grammar-update workflow. To comply, update grammar files and `AstBuilderVisitor.cs`, add samples, run parser tests, then run `dotnet test fifthlang.sln`.
 :::
 
 ## Grammar Compliance for Examples and Tests
 
 :::rule id="GRAM-003" category="validation" mandatory="true"
-All `.5th` files in `docs/`, `specs/`, `test/`, and `src/parser/grammar/test_samples/` must parse with the current grammar. CI enforces this with the `Validate .5th samples (parser-check)` step.
-
-Run `just validate-examples` locally before committing.
+All non-negative `.5th` samples in docs and tests must parse with the current grammar. To comply, run `just validate-examples` before commit.
 :::
 
 ## Common Non-Fifth Patterns to Avoid
 
 :::rule id="GRAM-004" category="syntax" mandatory="true"
-Do not use `var <name> =` in examples or tests. Use `name: type =` or the appropriate canonical Fifth form.
-:::
-
-:::rule id="GRAM-005" category="syntax" mandatory="true"
-Do not use declarations such as `graph g =` or `triple t =`. Use `g: graph =` or `t: triple =`.
-:::
-
-:::rule id="GRAM-006" category="syntax" mandatory="true"
-Do not use the legacy `when` guard shorthand. Use the parameter constraint form `param: Type | <expr>` together with block bodies.
+Do not use C# style `var <name> =` in Fifth examples or tests. To comply, use canonical declarations such as `name: type = value`.
 :::
 
 ## Canonical Guard Syntax
 
 :::rule id="GRAM-007" category="guards"
-The canonical contrast for guard syntax is:
+Use only parameter-constraint guard syntax. To comply, follow this contrast:
 
 ```fifth
 // INVALID
@@ -69,28 +48,5 @@ myprint(int x | x == 0) { std.print(x); }
 ## Negative Tests
 
 :::rule id="GRAM-008" mandatory="false" category="validation"
-Intentionally invalid files are excluded from example validation by these heuristics:
-
-- directory matches under `*/Invalid/*`
-- filenames containing `invalid`
-- an explicit negative-test comment marker in the file
-
-For debugging, force validation of negative examples with:
-
-```bash
-dotnet run --project src/tools/validate-examples/validate-examples.csproj -- --include-negatives
-```
-:::
-
-## Knowledge Graph Syntax
-
-:::rule id="GRAM-009" mandatory="false" category="knowledge-graph"
-Use these canonical knowledge-graph forms in examples and tests:
-
-- `name: store = sparql_store(<iri>);`
-- `store default = sparql_store(<iri>);`
-- `KG.CreateGraph()` to create graphs
-- `graph += triple` to add triples
-
-Validate these flows with `dotnet test test/kg-smoke-tests/kg-smoke-tests.csproj`.
+Exclude intentional negative tests from normal example-validation checks. To comply, keep them in `*/Invalid/*`, include `invalid` in filename, or use explicit negative-test markers; use `--include-negatives` only for debugging.
 :::

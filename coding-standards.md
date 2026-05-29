@@ -8,105 +8,62 @@ inclusion: auto
 
 ## Core Principles
 
-:::rule id="CODE-001" category="design"
-Every feature should start as a focused library under `src/` with a clear public contract.
-:::
-
 :::rule id="CODE-002" category="design"
-Prefer the simplest design that works. Do not introduce incidental complexity or abstractions that are not required.
+Prefer the simplest design that satisfies the functional requirement and the non-functional requirements and other guidelines. To comply, verify abstractions meet all requirements.
 :::
 
 :::rule id="CODE-003" category="maintainability"
-Make targeted, minimal changes that respect existing structure and public APIs.
-:::
-
-:::rule id="CODE-004" category="quality"
-Do not add catch-all error handling that hides defects. Any change that increases complexity must be justified explicitly.
-:::
-
-## C# Conventions
-
-:::rule id="CODE-005" category="platform"
-Target C# 14, or the latest language version supported by the .NET 10 SDK, and target .NET 10.0.
+Keep changes minimal and scoped to the target behavior. To comply, avoid unrelated refactors and preserve existing public APIs unless the change requires breaking them.
 :::
 
 :::rule id="CODE-006" category="versioning"
-Use Semantic Versioning in `MAJOR.MINOR.PATCH` form for all packages.
+Use Semantic Versioning in `MAJOR.MINOR.PATCH` format. To comply, bump version components according to compatibility impact.
 :::
 
 ## CLI and Text I/O Discipline
 
 :::rule id="CODE-007" category="cli"
-Use stdin and arguments for input, stdout for primary output, and stderr for errors and diagnostics.
+Use stdin/args for input, stdout for normal output, and stderr for errors. To comply, route diagnostics to stderr and keep success output on stdout.
 :::
 
 :::rule id="CODE-008" category="cli"
-Support human-readable text by default and add JSON output where it materially improves automation.
+Default CLI output must be human-readable text. To comply, add JSON output only when it meaningfully improves automation.
 :::
 
 :::rule id="CODE-009" category="cli"
-Favor deterministic, scriptable commands. Output must be stable and must not depend on timestamps or non-deterministic ordering.
+CLI output must be deterministic. To comply, avoid timestamps and non-deterministic ordering in command output.
 :::
 
 ## File Editing Rules
 
 :::rule id="CODE-010" category="generation" mandatory="true"
-Never hand-edit files in `src/ast-generated/`.
+NEVER hand-edit files in `src/ast-generated/`. To comply, make changes in metamodel or templates, then regenerate.
 :::
 
 :::rule id="CODE-011" category="generation" mandatory="true"
-To modify the AST, edit the metamodels in `src/ast-model/` and then regenerate the generated output.
+Modify AST structure only through `src/ast-model/` metamodels. To comply, regenerate generated AST output after metamodel edits.
 :::
 
 :::rule id="CODE-012" category="parser" mandatory="true"
-When grammar behavior changes, update both `FifthLexer.g4` and `FifthParser.g4` as needed.
+Update grammar files when grammar behavior changes. To comply, change `FifthLexer.g4` and `FifthParser.g4` as required by the syntax change.
 :::
 
 :::rule id="CODE-013" category="parser" mandatory="true"
-Always update `AstBuilderVisitor.cs` when grammar changes alter the parse tree or surface syntax.
+Keep `AstBuilderVisitor.cs` synchronized with grammar changes. To comply, update visitor methods whenever parse-tree shape or surface syntax changes.
 :::
 
 ## Repository Cleanliness
 
-:::rule id="CODE-014" category="repository" mandatory="true"
-Do not commit temporary debugging helpers, IL dumps, or scratch `.5th` programs.
-:::
-
 :::rule id="CODE-015" category="repository" mandatory="true"
-The `scripts/` directory is reserved for durable automation only.
-:::
-
-:::rule id="CODE-016" category="repository" mandatory="true"
-Do not commit `tmp_*.5th`, `build_debug_il/`, `KEEP_FIFTH_TEMP`, or outputs produced by `--keep-temp`.
-:::
-
-:::rule id="CODE-017" category="repository" mandatory="true"
-Use `.gitignore` patterns and local temporary directories for experiments rather than leaving scratch assets in the repository.
+Use `scripts/` only for durable automation. To comply, keep one-off scripts outside tracked repository paths.
 :::
 
 ## Security
 
 :::rule id="CODE-018" category="security" mandatory="true"
-Avoid executing arbitrary code during generation or parsing.
+Do not execute arbitrary code during parsing or generation. To comply, restrict execution paths to trusted, explicit operations.
 :::
 
 :::rule id="CODE-019" category="security"
-Validate inputs and keep user inputs separated from internal templates.
-:::
-
-:::rule id="CODE-020" category="security"
-Do not introduce network calls or file-system side effects without explicit review.
-:::
-
-## Key NuGet Packages
-
-:::rule id="CODE-021" category="dependencies"
-The core package set in this repository includes:
-
-- `Antlr4.Runtime.Standard` for the ANTLR runtime
-- `RazorLight` for code-generation templates
-- `System.CommandLine` for CLI parsing
-- `xUnit` and `FluentAssertions` for testing
-- `dunet` for discriminated unions
-- `Vogen` for value-object generation
+Validate all external inputs before use. To comply, keep user input data separated from internal template logic.
 :::

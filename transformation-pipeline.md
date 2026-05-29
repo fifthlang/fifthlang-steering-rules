@@ -7,63 +7,54 @@ fileMatchPattern: "src/compiler/LanguageTransformations/**,src/compiler/ParserMa
 
 # Language Transformation Pipeline
 
+:::rule id="PIPE-010" category="pipeline"
+Transformation passes MUST use rewriters rather than visitors. To comply, derive from `DefaultAstRewriter` or a class derived from it.
+:::
+
+:::rule id="PIPE-011" category="pipeline"
+Never use Recursive descent visitors unless the AST is not going to change.  To Comply, don't derive from DefaultRecursiveDescentVisitor or a class derived from it.
+:::
+
 ## Transformation Pass Order
 
-:::rule id="PIPE-001" category="pipeline" 
-The compiler applies these passes sequentially in `ParserManager.cs`:
-
-1. `TreeLinkageVisitor` for parent-child relationships
-2. `BuiltinInjectorVisitor` for built-in function definitions
-3. `ClassCtorInserter` for default constructors
-4. `SymbolTableBuilderVisitor` for scoping symbol tables
-5. `PropertyToFieldExpander` for property syntax expansion
-6. `OverloadGatheringVisitor` for overload grouping
-7. `OverloadTransformingVisitor` for guard and subclause transformation
-8. `DestructuringVisitor` for destructuring property references
-9. `DestructuringLoweringRewriter` for lowering destructuring into variable declarations
-10. `TypeAnnotationVisitor` for type inference and annotation
+:::rule id="PIPE-001" category="pipeline"
+Apply transformation passes in the canonical order defined by `ParserManager.cs`. To comply, keep pass registration in this sequence: TreeLinkage, BuiltinInjector, ClassCtorInserter, SymbolTableBuilder, PropertyToFieldExpander, OverloadGathering, OverloadTransforming, DestructuringVisitor, DestructuringLoweringRewriter, TypeAnnotation.
 :::
 
 ## Design Principles
 
-:::rule id="PIPE-002" category="design" 
-Each visitor or rewriter in the transformation pipeline must have one well-defined responsibility.
+:::rule id="PIPE-002" category="design"
+Each transformation pass must have one well-defined responsibility. To comply, split passes that mix unrelated concerns.
 :::
 
-:::rule id="PIPE-003" category="dependency" 
-Transformation passes are order-dependent, and later passes may rely on invariants established by earlier passes.
+:::rule id="PIPE-003" category="dependency"
+A pass may depend only on invariants established by earlier passes. To comply, place each pass after the pass that creates its prerequisites.
 :::
 
-:::rule id="PIPE-004" mandatory="false" category="design" 
-Prefer several simple, comprehensible passes over a single pass that mixes unrelated transformation logic.
+:::rule id="PIPE-004" mandatory="false" category="design"
+Prefer multiple simple passes over one mixed pass. To comply, introduce a new focused pass instead of extending an unrelated pass.
 :::
 
-:::rule id="PIPE-005" mandatory="false" category="documentation" 
-Document dependencies between transformation passes whenever later stages rely on earlier ones.
+:::rule id="PIPE-005" mandatory="false" category="documentation"
+Document pass dependencies when one pass relies on another. To comply, record dependency assumptions in code comments or phase summaries.
 :::
 
-:::rule id="PIPE-006" category="correctness" 
-Each transformation pass must preserve AST validity and type safety.
+:::rule id="PIPE-006" category="correctness"
+Every pass must preserve AST validity and type safety. To comply, add tests that fail if the pass creates invalid or untyped AST states.
 :::
 
-:::rule id="PIPE-007" mandatory="false" category="design" 
-Prefer expressing language adaptation as AST transformations rather than pushing additional complexity into code generation.
+:::rule id="PIPE-007" mandatory="false" category="design"
+Prefer AST transformations over adding complexity to code generation. To comply, lower language constructs before `LoweredAstToRoslynTranslator`.
 :::
 
 ## Adding a New Transformation
 
-:::rule id="PIPE-008" category="workflow" 
-To add a new transformation:
-
-1. Create the visitor or rewriter in `src/compiler/LanguageTransformations/`
-2. Choose the correct base pattern using the code-generation steering guidance
-3. Register the transformation in `src/compiler/ParserManager.cs`
-4. Add tests in `test/ast-tests/` or `test/runtime-integration-tests/`
-5. Build the solution and run the full test suite
+:::rule id="PIPE-008" category="workflow"
+A new transformation is complete only after implementation, registration, and tests. To comply, add the pass in `src/compiler/LanguageTransformations/`, register it in `src/compiler/ParserManager.cs`, add tests, then run build and full tests.
 :::
 
 ## Code Generation
 
-:::rule id="PIPE-009" category="code-generation" 
-The compiler uses `LoweredAstToRoslynTranslator` to emit C# syntax trees from the lowered AST for Roslyn compilation and PE or PDB emission. Roslyn-generated PDBs must include full line-and-column sequence points so debugging fidelity is preserved.
+:::rule id="PIPE-009" category="code-generation"
+Emit Roslyn syntax from lowered AST through `LoweredAstToRoslynTranslator` with debug-accurate sequence points. To comply, preserve full line-and-column mapping in generated PDB data.
 :::
