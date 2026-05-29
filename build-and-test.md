@@ -48,7 +48,7 @@ dotnet test fifthlang.sln
 Do not cancel this run. Use a timeout of at least 5 minutes when automation controls execution time.
 :::
 
-:::rule id="BUILD-005" category="testing" 
+:::rule id="BUILD-005" mandatory="false" category="testing" 
 Use this command for a quick smoke-test subset while iterating locally:
 
 ```bash
@@ -66,7 +66,7 @@ dotnet run --project src/ast_generator/ast_generator.csproj -- --folder src/ast-
 
 ## Verification
 
-:::rule id="BUILD-007" category="verification" 
+:::rule id="BUILD-007" mandatory="false" category="verification" 
 Confirm the toolchain before debugging restore or build failures:
 
 ```bash
@@ -95,15 +95,15 @@ Always build the full solution rather than individual projects so dependency ord
 Do not cancel restore, build, test, or generation operations. The documented timings in this repository are normal and expected.
 :::
 
-:::rule id="BUILD-010" category="parser" 
+:::rule id="BUILD-010" mandatory="false" category="parser" 
 ANTLR grammar compilation happens automatically during the parser project build. Do not add redundant manual generation steps to the normal workflow.
 :::
 
-:::rule id="BUILD-011" category="generation" 
+:::rule id="BUILD-011" mandatory="false" category="generation" 
 AST code generation runs automatically before compilation via MSBuild targets. Manual generation is primarily for focused regeneration workflows.
 :::
 
-:::rule id="BUILD-012" category="diagnostics" 
+:::rule id="BUILD-012" mandatory="false" category="diagnostics" 
 The following warnings are expected and safe to ignore unless they change unexpectedly:
 
 - ANTLR `assoc` option warnings
@@ -121,4 +121,19 @@ After any change, validate in this order:
 3. Verify runtime behavior
 
 Compilation alone is not sufficient validation.
+:::
+
+## Granular Test Targets
+
+:::rule id="BUILD-014" mandatory="false" category="testing" 
+These targeted commands are available for narrower local validation:
+
+```bash
+just test-ast
+just test-runtime
+just test-syntax
+just test-all-roslyn
+```
+
+Use them to iterate locally, but retain the full solution test run as the regression gate.
 :::

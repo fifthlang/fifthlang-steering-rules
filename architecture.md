@@ -4,6 +4,12 @@ title: Architecture Rules
 inclusion: always
 ---
 
+# Architecture Rules
+
+:::rule id="ARCH-001" mandatory="true" category="governance" 
+Architecture guidance for the Fifth compiler must be concrete and measurable. Every rule in this document must include a compliance check an agent can perform.
+:::
+
 ## Dependency & Module Boundaries
 
 :::rule id="ARCH-002" category="dependency" 
@@ -21,12 +27,12 @@ Verify: inspect project references under `src/` and reject any backward edge rel
 :::
 
 :::rule id="ARCH-003" category="generation" 
-Files under `src/ast-generated/` are output, not source. Any diff modifying `src/ast-generated/` must also show changes to `src/ast-model/AstMetamodel.cs` or `src/ast_generator/Templates/`.
+Files under `src/ast-generated/` are output, not source. Any diff modifying `src/ast-generated/` must also change `src/ast-model/AstMetamodel.cs` or `src/ast_generator/Templates/`.
 
 Verify: if `git diff --name-only` includes `src/ast-generated/`, it must also include `src/ast-model/` or `src/ast_generator/Templates/`.
 :::
 
-:::rule id="ARCH-004" category="ast" mandatory="true"
+:::rule id="ARCH-004" category="ast" 
 All AST node types, fields, and inheritance are defined in `src/ast-model/AstMetamodel.cs`. No hand-written class outside `ast-model` may subclass `AstThing` or introduce new AST node types.
 
 Verify: search `.cs` files outside `src/ast-model/` and `src/ast-generated/` for classes inheriting `AstThing`, `Expression`, `Statement`, or `TypeRef`. Any match is non-compliant.
