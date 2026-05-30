@@ -6,10 +6,6 @@ inclusion: always
 
 # Architecture Rules
 
-:::rule id="ARCH-001" mandatory="true" category="governance"
-Each rule in this document must be objectively testable by an automated check. To comply, include a `Verify:` line with a concrete pass/fail condition.
-:::
-
 ## Dependency & Module Boundaries
 
 :::rule id="ARCH-002" category="dependency"
