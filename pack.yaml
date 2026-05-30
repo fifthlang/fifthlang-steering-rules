@@ -1,0 +1,4 @@
+name: "fifthlang-steering-rules"
+version: "1.0.0"
+minSteergenVersion: "0.3.3"
+scope: project
